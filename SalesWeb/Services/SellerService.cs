@@ -37,9 +37,17 @@ namespace SalesWeb.Services
 
         public async Task RemoveAsync(int id)
         {
-            var obj = await _context.Sellers.FindAsync(id);
-            _context.Sellers.Remove(obj);
-            await _context.SaveChangesAsync();
+            try
+            {
+                var obj = await _context.Sellers.FindAsync(id);
+                _context.Sellers.Remove(obj);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException e)
+            {
+                throw new IntegrityException(e.Message);
+            }
+            
         }
 
         public async Task UpdateAsync(Seller obj)
